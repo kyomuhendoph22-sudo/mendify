@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="About Mendify - Your personal mental wellness companion. Learn about our mission, features, and the creator behind this innovative mental health app.">
+    <meta name="keywords" content="mental health, wellness app, about mendify, creator, mission, mental wellness">
+    <title>About Mendify - Your Mental Wellness Companion</title>
+    <link rel="icon" type="image/png" href="pictures/MENDIFY LOGO.png">
+    <link rel="stylesheet" href="mendify.css">
+    <script>
+        const urlsToCache = [
+          './MENDIFY.HTML',
+          './about.html',
+          './gallery.html',
+          './mendify.css',
+          './mendify.js',
+          './mendify-enhanced.js',
+          './manifest.json',
+          './pictures/MENDIFY LOGO.png',
+          './pictures/hands.jpg',
+          './pictures/vladislav-klapin-SymZoeE8quA-unsplash.jpg',
+          'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
+        ];
+    </script>
+    <style>
+        .about-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            border-radius: 30px;
+            color: white;
+        }
+        
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+        }
+        
+        .section h2 {
+            color: var(--accent);
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        .creator-section {
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.1), rgba(56, 161, 105, 0.1));
+        }
+        
+        .creator-content {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .creator-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .creator-info h3 {
+            color: var(--accent);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .creator-bio {
+            line-height: 1.8;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .tech-stack {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .tech-badge {
+            background: var(--accent);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, var(--success), #38a169);
+            border-radius: 30px;
+            color: white;
+        }
+        
+        .cta-title {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .cta-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-btn-primary {
+            background: white;
+            color: var(--success);
+        }
+        
+        .cta-btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 32px;
+            }
+            
+            .creator-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .creator-image {
+                margin: 0 auto;
+            }
+            
+            .section {
+                padding: 30px 20px;
+            }
+        }
+
+        /* Navigation Bar Styles */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Adjust main content for fixed nav */
+        .about-container {
+            margin-top: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 10px 15px;
+            }
+
+            .nav-menu {
+                gap: 10px;
+            }
+
+            .nav-link {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            .about-container {
+                margin-top: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="logo" style="width: 30px; height: 30px;"></div>
+                <span style="font-weight: 600; color: var(--accent);">Mendify</span>
+            </div>
+            <div class="nav-menu">
+                <a href="MENDIFY.HTML" class="nav-link">🏠 Home</a>
+                <a href="gallery.html" class="nav-link">🖼️ Gallery</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="about-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="logo" style="width: 100px; height: 100px; margin: 0 auto 30px;"></div>
+            <h1 class="hero-title">About Mendify</h1>
+            <p class="hero-subtitle">Your Personal Mental Wellness Companion</p>
+            <p style="font-size: 18px; opacity: 0.8; max-width: 600px; margin: 0 auto;">
+                A comprehensive mental health app designed to help you heal, breathe, grow, and thrive through evidence-based wellness practices.
+            </p>
+        </div>
+
+        <!-- Mission Section -->
+        <div class="section">
+            <h2>🎯 Our Mission</h2>
+            <p style="font-size: 18px; line-height: 1.8; text-align: center; max-width: 700px; margin: 0 auto;">
+                Mendify was created with a simple yet powerful mission: to make mental wellness accessible, 
+                affordable, and effective for everyone. We believe that everyone deserves access to tools 
+                that support their mental health journey, regardless of their circumstances or location.
+            </p>
+            
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-number">15+</span>
+                    <span class="stat-label">Wellness Features</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Support Available</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Privacy Focused</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">Free</span>
+                    <span class="stat-label">For Everyone</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="section">
+            <h2>✨ Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🫁</span>
+                    <h3 class="feature-title">Breathing Exercises</h3>
+                    <p>Guided breathing techniques to reduce stress and anxiety, with customizable timers and soothing instructions.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">😊</span>
+                    <h3 class="feature-title">Mood Tracking</h3>
+                    <p>Daily mood monitoring with insights and patterns to help you understand your emotional wellbeing over time.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🙏</span>
+                    <h3 class="feature-title">Gratitude Journal</h3>
+                    <p>Cultivate positivity through daily gratitude practice with a beautiful, easy-to-use journaling interface.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🤖</span>
+                    <h3 class="feature-title">AI Support Chat</h3>
+                    <p>24/7 conversational support to help you process thoughts and feelings in a safe, judgment-free space.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🧘</span>
+                    <h3 class="feature-title">Guided Meditation</h3>
+                    <p>Professional meditation programs for stress relief, better sleep, focus, and anxiety management.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🎵</span>
+                    <h3 class="feature-title">Soundscapes & Music</h3>
+                    <p>Curated relaxing sounds and music to create the perfect ambiance for meditation and relaxation.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Creator Section -->
+        <div class="section creator-section">
+            <h2>👨‍💻 Meet the Creator</h2>
+            <div class="creator-content">
+                <div class="creator-image">👤</div>
+                <div class="creator-info">
+                    <h3>Matovu Job</h3>
+                    <p class="creator-bio">
+                        Mendify was created by Matovu Job, a passionate developer who understands the importance of mental health 
+                        and wanted to build something that could genuinely help people on their wellness journey. 
+                        Combining modern web technologies with evidence-based wellness practices, Mendify represents 
+                        months of research, development, and user-centered design.
+                    </p>
+                    <p class="creator-bio">
+                        Matovu's project is driven by a commitment to mental health advocacy and the belief that technology 
+                        can be a force for good when used thoughtfully and compassionately. Every feature in Mendify 
+                        has been carefully designed to provide real value and support to users on their mental wellness journey.
+                    </p>
+                    
+                    <div>
+                        <h4 style="color: var(--accent); margin-bottom: 15px;">Technologies Used</h4>
+                        <div class="tech-stack">
+                            <span class="tech-badge">HTML5</span>
+                            <span class="tech-badge">CSS3</span>
+                            <span class="tech-badge">JavaScript</span>
+                            <span class="tech-badge">PWA</span>
+                            <span class="tech-badge">Service Worker</span>
+                            <span class="tech-badge">Local Storage</span>
+                            <span class="tech-badge">Web Audio API</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Values Section -->
+        <div class="section">
+            <h2>💚 Our Values</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🔒</span>
+                    <h3 class="feature-title">Privacy First</h3>
+                    <p>Your data stays on your device. We believe mental health data should be private and secure.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🌍</span>
+                    <h3 class="feature-title">Accessibility</h3>
+                    <p>Mental wellness tools should be available to everyone, everywhere, regardless of income or location.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🔬</span>
+                    <h3 class="feature-title">Evidence-Based</h3>
+                    <p>Our features are based on scientific research and proven mental health practices.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">❤️</span>
+                    <h3 class="feature-title">Compassion</h3>
+                    <p>Every aspect of Mendify is designed with empathy and understanding for the human experience.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="cta-section">
+            <h2 class="cta-title">Start Your Wellness Journey Today</h2>
+            <p style="font-size: 18px; margin-bottom: 30px;">
+                Join thousands of users who have transformed their mental wellness with Mendify
+            </p>
+            <div class="cta-buttons">
+                <a href="MENDIFY.HTML" class="cta-btn cta-btn-primary">🚀 Launch Mendify</a>
+                <a href="mailto:support@mendify.app" class="cta-btn cta-btn-secondary">📧 Contact Us</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 40px 20px; color: #666;">
+            <p>&copy; 2026 Mendify. Made with ❤️ for better mental health.</p>
+            <p style="margin-top: 10px; font-size: 14px;">
+                This is a personal project dedicated to mental health awareness and support.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scrolling and interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add entrance animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeIn 0.6s ease forwards';
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.section, .feature-card').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Add hover effects to cards
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

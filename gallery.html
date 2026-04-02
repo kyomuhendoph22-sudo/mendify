@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mendify Gallery - Visual inspiration and wellness imagery">
+    <title>Mendify Gallery - Visual Wellness</title>
+    <link rel="icon" type="image/png" href="pictures/MENDIFY LOGO.png">
+    <link rel="stylesheet" href="mendify.css">
+    <style>
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .gallery-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .gallery-subtitle {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .gallery-item {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(102,126,234,0.2);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-caption {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .gallery-caption h3 {
+            margin: 0 0 10px 0;
+            color: var(--accent);
+            font-size: 18px;
+        }
+
+        .gallery-caption p {
+            color: #666;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .gallery-title {
+                font-size: 32px;
+            }
+
+            .gallery-image {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery-container">
+        <!-- Navigation -->
+        <div class="nav-buttons">
+            <a href="MENDIFY.HTML" class="nav-btn">🏠 Back to Mendify</a>
+            <a href="about.html" class="nav-btn">ℹ️ About</a>
+        </div>
+
+        <!-- Header -->
+        <div class="gallery-header">
+            <h1 class="gallery-title">🖼️ Wellness Gallery</h1>
+            <p class="gallery-subtitle">Visual inspiration for your mental wellness journey</p>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="pictures/MENDIFY LOGO.png" alt="Mendify Logo" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Mendify Logo</h3>
+                    <p>Your mental wellness companion</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/hands.jpg" alt="Supportive Hands" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Support & Connection</h3>
+                    <p>You are not alone in your journey</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/vladislav-klapin-SymZoeE8quA-unsplash.jpg" alt="Peaceful Landscape" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Serenity & Nature</h3>
+                    <p>Find peace in natural beauty</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/inspirational quotes/n1.png" alt="Inspirational Quote" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Daily Inspiration</h3>
+                    <p>"Your thoughts are seeds of your future garden"</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/inspirational quotes/n2.jpg" alt="Motivational Quote" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Strength & Resilience</h3>
+                    <p>"You are stronger than you know"</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/inspirational quotes/n3.png" alt="Wellness Quote" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Mindfulness</h3>
+                    <p>"The present moment is the only time over which we have dominion"</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/inspirational quotes/n4.jpg" alt="Healing Quote" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Self-Care</h3>
+                    <p>"Self-care is not selfish. You cannot pour from an empty cup"</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/inspirational quotes/n5.jpg" alt="Growth Quote" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Progress & Growth</h3>
+                    <p>"Progress, not perfection, is the key to wellness"</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/inspirational quotes/n6.jpg" alt="Hope Quote" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Hope & Tomorrow</h3>
+                    <p>"Tomorrow's strength comes from today's healing"</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/inspirational quotes/n7.jpg" alt="Validation Quote" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Feelings & Validation</h3>
+                    <p>"Your feelings are valid. Your experiences matter"</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/inspirational quotes/n8.jpg" alt="Capability Quote" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Personal Power</h3>
+                    <p>"You have survived 100% of your worst days. You're capable of more"</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/inspirational quotes/n9.jpg" alt="Healing Journey" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Healing Journey</h3>
+                    <p>"Your healing is important"</p>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <img src="pictures/inspirational quotes/n10.jpg" alt="Future Focus" class="gallery-image">
+                <div class="gallery-caption">
+                    <h3>Future & Garden</h3>
+                    <p>"Your thoughts are seeds of your future garden. Plant them wisely"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 40px 20px; color: #666;">
+            <p>&copy; 2026 Mendify. Made with ❤️ for better mental health.</p>
+        </div>
+    </div>
+</body>
+</html>
