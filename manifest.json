@@ -2,7 +2,7 @@
   "name": "Mendify - Heal. Breathe. Grow. Thrive.",
   "short_name": "Mendify",
   "description": "Your personal mental wellness companion with breathing exercises, mood tracking, journal, music, guided meditation, and 24/7 support.",
-  "start_url": "/website/MENDIFY.HTML",
+  "start_url": "/website/index.html",
   "display": "standalone",
   "background_color": "#667eea",
   "theme_color": "#667eea",
@@ -46,7 +46,7 @@
       "name": "Quick Mood Check-in",
       "short_name": "Mood",
       "description": "Track your current mood",
-      "url": "/website/MENDIFY.HTML?action=mood",
+      "url": "/website/index.html?action=mood",
       "icons": [
         {
           "src": "pictures/MENDIFY LOGO.png",
@@ -58,7 +58,7 @@
       "name": "Start Breathing",
       "short_name": "Breathe",
       "description": "Begin breathing exercise",
-      "url": "/website/MENDIFY.HTML?action=breathing",
+      "url": "/website/index.html?action=breathing",
       "icons": [
         {
           "src": "pictures/MENDIFY LOGO.png",

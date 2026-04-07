@@ -45,6 +45,12 @@ function show(id){
             if (screenTitle) {
                 showToast(`Now viewing: ${screenTitle.textContent}`, 'success', 1000);
             }
+
+            // Toggle mini-dashboard visibility
+            const miniDashboard = document.querySelector('.mini-dashboard');
+            if (miniDashboard) {
+                miniDashboard.style.display = id === 'signin' ? 'none' : 'flex';
+            }
         } else {
             console.error(`Screen with id "${id}" not found`);
             showToast('Screen not found', 'error');
@@ -192,6 +198,64 @@ function toggleSOS(){
     s.style.display = s.style.display === "flex" ? "none" : "flex";
 }
 
+// Theme persistence and settings
+function initializeTheme() {
+    const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+    const currentTheme = settings.theme || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    const themeBtn = document.getElementById('theme-toggle');
+    if (themeBtn) themeBtn.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', nextTheme);
+    const themeBtn = document.getElementById('theme-toggle');
+    if (themeBtn) themeBtn.textContent = nextTheme === 'dark' ? '☀️' : '🌙';
+    const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+    settings.theme = nextTheme;
+    localStorage.setItem('settings', JSON.stringify(settings));
+    showToast(`${nextTheme.charAt(0).toUpperCase() + nextTheme.slice(1)} mode activated`, 'success', 1500);
+}
+
+function loadSettings() {
+    const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+    const moodReminderToggle = document.getElementById('mood-reminder');
+    const gratitudeReminderToggle = document.getElementById('gratitude-reminder');
+
+    if (moodReminderToggle) moodReminderToggle.checked = !!settings.moodReminder;
+    if (gratitudeReminderToggle) gratitudeReminderToggle.checked = !!settings.gratitudeReminder;
+
+    if (settings.theme) {
+        document.documentElement.setAttribute('data-theme', settings.theme);
+        const themeBtn = document.getElementById('theme-toggle');
+        if (themeBtn) themeBtn.textContent = settings.theme === 'dark' ? '☀️' : '🌙';
+    }
+}
+
+function saveSettings() {
+    const moodReminderToggle = document.getElementById('mood-reminder');
+    const gratitudeReminderToggle = document.getElementById('gratitude-reminder');
+    const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+
+    settings.moodReminder = moodReminderToggle ? moodReminderToggle.checked : false;
+    settings.gratitudeReminder = gratitudeReminderToggle ? gratitudeReminderToggle.checked : false;
+
+    localStorage.setItem('settings', JSON.stringify(settings));
+}
+
+function setupShortcutKeys() {
+    document.addEventListener('keydown', (e) => {
+        if (e.altKey && e.key.toLowerCase() === 'h') { show('home'); }
+        if (e.altKey && e.key.toLowerCase() === 'b') { show('breathing'); }
+        if (e.altKey && e.key.toLowerCase() === 'v') { show('vent'); }
+        if (e.altKey && e.key.toLowerCase() === 'g') { show('gratitude'); }
+        if (e.altKey && e.key.toLowerCase() === 'm') { show('mood'); }
+        if (e.altKey && e.key.toLowerCase() === 's') { show('settings'); }
+    });
+}
+
 // PWA Service Worker Registration
 function registerSW() {
     if ('serviceWorker' in navigator) {
@@ -204,6 +268,7 @@ function registerSW() {
 // LOAD
 window.onload = () => {
     registerSW();
+    setupShortcutKeys();
     if(localStorage.getItem('name')){
         show('home');
         updateHome();
@@ -217,6 +282,8 @@ window.onload = () => {
     }
     // Initialize theme regardless of login status
     initializeTheme();
+    // Ensure daily challenge is always set
+    setDailyChallenge();
 }
 
 // MOOD TRACKING
@@ -316,6 +383,17 @@ function updateBreathingDisplay() {
         const phase = Math.floor((breathingTimeLeft % 8) / 2);
         const instructions = ['Breathe In...', 'Hold...', 'Breathe Out...', 'Hold...'];
         document.getElementById('breathing-instruction').textContent = instructions[phase];
+
+        // Control breathing animation
+        const circle = document.getElementById('breathing-circle');
+        if (circle) {
+            circle.classList.remove('inhale', 'exhale');
+            if (phase === 0) {
+                circle.classList.add('inhale');
+            } else if (phase === 2) {
+                circle.classList.add('exhale');
+            }
+        }
     }
 }
 
@@ -469,7 +547,167 @@ function updateStats() {
     document.getElementById('journal-entries-count').textContent = journal.length;
     document.getElementById('gratitude-count').textContent = gratitude.length;
 
+    // Update mini-dashboard instant metrics
+    const latestMood = moods.length > 0 ? moods[0].mood.label : 'N/A';
+    document.getElementById('mini-streak').textContent = `🔥 ${streak}`;
+    document.getElementById('mini-mood').textContent = moods.length > 0 ? `${moods[0].mood.emoji} ${latestMood}` : '😊 N/A';
+    document.getElementById('mini-journal').textContent = `📓 ${journal.length}`;
+    document.getElementById('mini-goals').textContent = `🎯 ${JSON.parse(localStorage.getItem('goals') || '[]').length}`;
+
     updateMoodInsights(moods);
+    setDailyChallenge();
+    renderMoodCalendar();
+}
+
+// Mood calendar heatmap
+function renderMoodCalendar() {
+    const moods = JSON.parse(localStorage.getItem('moods') || '[]');
+    const calendarGrid = document.getElementById('calendar-grid');
+    if (!calendarGrid) return;
+
+    const today = new Date();
+    const days = [];
+    for (let i = 29; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        days.push(date);
+    }
+
+    const moodMap = {};
+    moods.forEach(entry => {
+        const entryDate = new Date(entry.date).toDateString();
+        moodMap[entryDate] = entry.mood.label;
+    });
+
+    calendarGrid.innerHTML = days.map(day => {
+        const dayStr = day.toDateString();
+        const mood = moodMap[dayStr];
+        let className = 'empty';
+        if (mood === 'Good' || mood === 'Great') className = 'positive';
+        else if (mood === 'Neutral') className = 'neutral';
+        else if (mood === 'Sad' || mood === 'Very Sad') className = 'challenging';
+
+        return `<div class="calendar-day ${className}" title="${day.toLocaleDateString()}: ${mood || 'No data'}">${day.getDate()}</div>`;
+    }).join('');
+}
+
+// Daily challenge support
+function getRandomChallenge() {
+    const challenges = [
+        'Write down 3 things you’re grateful for.',
+        'Take a 5-minute mindful breathing break.',
+        'Send a supportive message to a friend.',
+        'Spend 10 minutes in nature (or look outside).',
+        'Write one positive note about yourself.',
+        'Drink a glass of water and pause for 30 seconds.',
+        'Do a gentle stretch routine for 5 minutes.'
+    ];
+    return challenges[Math.floor(Math.random() * challenges.length)];
+}
+
+function setDailyChallenge() {
+    const today = new Date().toISOString().split('T')[0];
+    const challengeState = JSON.parse(localStorage.getItem('dailyChallenge') || '{}');
+
+    if (challengeState.date !== today || !challengeState.task) {
+        const task = getRandomChallenge();
+        localStorage.setItem('dailyChallenge', JSON.stringify({ date: today, task: task, completed: false }));
+        document.getElementById('challenge-text').textContent = task;
+        document.getElementById('challenge-status').textContent = 'Not completed yet.';
+        document.getElementById('challenge-btn').disabled = false;
+
+        const lastCompleted = localStorage.getItem('challengeLastCompleted');
+        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+        if (lastCompleted !== yesterday && lastCompleted !== today) {
+            localStorage.setItem('challengeStreak', '0');
+        }
+    } else {
+        document.getElementById('challenge-text').textContent = challengeState.task;
+        if (challengeState.completed) {
+            document.getElementById('challenge-status').textContent = '✅ Completed! Great work.';
+            document.getElementById('challenge-btn').disabled = true;
+            document.getElementById('challenge-btn').textContent = 'Completed';
+        } else {
+            document.getElementById('challenge-status').textContent = 'Not completed yet.';
+            document.getElementById('challenge-btn').disabled = false;
+            document.getElementById('challenge-btn').textContent = 'Mark as complete';
+        }
+    }
+    updateChallengeStats();
+}
+
+function completeDailyChallenge() {
+    const challengeState = JSON.parse(localStorage.getItem('dailyChallenge') || '{}');
+    if (!challengeState.task || challengeState.completed) return;
+
+    challengeState.completed = true;
+    localStorage.setItem('dailyChallenge', JSON.stringify(challengeState));
+
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    const lastCompleted = localStorage.getItem('challengeLastCompleted');
+    let streak = parseInt(localStorage.getItem('challengeStreak') || '0');
+
+    if (lastCompleted === yesterday) {
+        streak += 1;
+    } else {
+        streak = 1;
+    }
+
+    localStorage.setItem('challengeStreak', String(streak));
+    localStorage.setItem('challengeLastCompleted', today);
+
+    document.getElementById('challenge-status').textContent = '✅ Completed! Great work.';
+    document.getElementById('challenge-btn').disabled = true;
+    document.getElementById('challenge-btn').textContent = 'Completed';
+
+    showToast('Daily challenge completed! 🎉', 'success');
+    launchConfetti();
+    updateChallengeStats();
+}
+
+function updateChallengeStats() {
+    const streak = parseInt(localStorage.getItem('challengeStreak') || '0');
+    const badge = getChallengeBadge(streak);
+
+    document.getElementById('challenge-streak').textContent = streak;
+    document.getElementById('challenge-badge-status').textContent = badge;
+
+    const target = streak >= 30 ? 50 : streak >= 14 ? 30 : streak >= 7 ? 14 : 7;
+    const progress = Math.min(100, Math.round((streak / target) * 100));
+
+    const circle = document.querySelector('.progress-ring circle.progress');
+    if (circle) {
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (progress / 100) * circumference;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = `${offset}`;
+    }
+    const ringText = document.getElementById('progress-ring-value');
+    if (ringText) ringText.textContent = `${progress}%`;
+}
+
+function getChallengeBadge(streak) {
+    if (streak >= 30) return 'Platinum Champion';
+    if (streak >= 14) return 'Gold Guardian';
+    if (streak >= 7) return 'Silver Seeker';
+    if (streak >= 3) return 'Bronze Builder';
+    if (streak > 0) return 'Getting Started';
+    return 'No badge yet';
+}
+
+function launchConfetti() {
+    for (let i = 0; i < 45; i++) {
+        const confetti = document.createElement('span');
+        confetti.className = 'confetti-piece';
+        confetti.style.left = `${Math.random() * 100}vw`;
+        confetti.style.backgroundColor = ['#f59e0b', '#10b981', '#3b82f6', '#6366f1'][Math.floor(Math.random() * 4)];
+        confetti.style.animationDuration = `${1.6 + Math.random() * 1.1}s`;
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 2200);
+    }
 }
 
 // Mood Insights helper
@@ -559,15 +797,6 @@ function resetPomodoro(){
     document.getElementById('pomodoro-cycle').textContent = `Cycle: ${pomodoroCycles} completed`;
     updatePomodoroDisplay();
 }
-
-// SOUNDSCAPES
-let currentSound = null;
-const soundUrls = {
-    rain: 'https://www.soundjay.com/misc/sounds/rain-03.mp3',
-    ocean: 'https://www.soundjay.com/misc/sounds/waves-1.mp3',
-    forest: 'https://www.soundjay.com/misc/sounds/forest-1.mp3',
-    meditation: 'https://www.soundjay.com/misc/sounds/bell-meditation-1.mp3'
-};
 
 // MUSIC PLAYER
 const musicPlaylist = [
@@ -689,371 +918,7 @@ function playTrack(index) {
     document.getElementById('music-play-btn').textContent = '⏸️ Pause';
 }
 
-function nextTrack() {
-    currentTrackIndex = (currentTrackIndex + 1) % musicPlaylist.length;
-    selectTrack(currentTrackIndex);
-}
-
-function prevTrack() {
-    currentTrackIndex = (currentTrackIndex - 1 + musicPlaylist.length) % musicPlaylist.length;
-    selectTrack(currentTrackIndex);
-}
-
 // End music block
-
-// Fallback URLs in case primary ones fail
-const fallbackUrls = {
-    rain: 'https://freesound.org/data/previews/316/316847_5123451-lq.mp3',
-    ocean: 'https://freesound.org/data/previews/316/316847_5123451-lq.mp3',
-    forest: 'https://freesound.org/data/previews/316/316847_5123451-lq.mp3',
-    meditation: 'https://freesound.org/data/previews/316/316847_5123451-lq.mp3'
-};
-
-function playSound(type) {
-    // Stop any currently playing sound
-    stopAllSounds();
-
-    try {
-        if(soundUrls[type]) {
-            const audio = new Audio();
-            audio.src = soundUrls[type];
-            audio.loop = true;
-            audio.volume = document.getElementById('volume-slider') ? document.getElementById('volume-slider').value / 100 : 0.5;
-
-            // Add event listeners for better UX
-            audio.addEventListener('canplaythrough', () => {
-                audio.play().catch(error => {
-                    console.log('Audio play failed:', error);
-                    // Try fallback URL
-                    tryFallbackSound(type);
-                });
-            });
-
-            audio.addEventListener('error', (e) => {
-                console.log('Audio load error:', e);
-                // Try fallback URL
-                tryFallbackSound(type);
-            });
-
-            currentSound = { type, audio };
-
-            // Update button states
-            document.querySelectorAll('.sound-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-    } catch (error) {
-        console.log('Sound setup error:', error);
-        // Try simple tone as last resort
-        playSimpleTone(type === 'rain' || type === 'ocean' ? 'calm' : 'nature');
-    }
-}
-
-function tryFallbackSound(type) {
-    if(fallbackUrls[type] && currentSound && currentSound.type === type) {
-        const audio = new Audio();
-        audio.src = fallbackUrls[type];
-        audio.loop = true;
-        audio.volume = document.getElementById('volume-slider') ? document.getElementById('volume-slider').value / 100 : 0.5;
-
-        audio.addEventListener('canplaythrough', () => {
-            audio.play().catch(error => {
-                console.log('Fallback audio also failed:', error);
-                // As last resort, use simple tone
-                playSimpleTone(type === 'rain' || type === 'ocean' ? 'calm' : 'nature');
-            });
-        });
-
-        audio.addEventListener('error', (e) => {
-            console.log('Fallback audio load error:', e);
-            // As last resort, use simple tone
-            playSimpleTone(type === 'rain' || type === 'ocean' ? 'calm' : 'nature');
-        });
-
-        currentSound.audio = audio;
-    }
-}
-
-function stopAllSounds() {
-    // Stop regular audio
-    if(currentSound && currentSound.audio) {
-        currentSound.audio.pause();
-        currentSound.audio.currentTime = 0;
-        currentSound = null;
-    }
-
-    // Stop simple tone
-    stopSimpleTone();
-
-    // Stop generated sounds
-    if(currentSound && currentSound.oscillators) {
-        currentSound.oscillators.forEach(sound => {
-            try {
-                if(sound.oscillator) sound.oscillator.stop();
-            } catch(e) {}
-        });
-        currentSound.oscillators = null;
-    }
-
-    currentSound = null;
-    document.querySelectorAll('.sound-btn, .btn').forEach(btn => btn.classList.remove('active'));
-}
-
-// Volume control
-function updateVolume() {
-    const volume = document.getElementById('volume-slider').value / 100;
-    document.getElementById('volume-value').textContent = Math.round(volume * 100) + '%';
-
-    if(currentSound && currentSound.audio) {
-        currentSound.audio.volume = volume;
-    }
-}
-
-// Simple tone generator as fallback
-let toneOscillator = null;
-let toneGain = null;
-let audioContext = null;
-
-function playSimpleTone(type) {
-    stopAllSounds();
-    stopSimpleTone();
-
-    try {
-        // Initialize audio context
-        if(!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
-        if(audioContext.state === 'suspended') {
-            audioContext.resume();
-        }
-
-        // Create oscillator and gain nodes
-        toneOscillator = audioContext.createOscillator();
-        toneGain = audioContext.createGain();
-
-        // Connect nodes
-        toneOscillator.connect(toneGain);
-        toneGain.connect(audioContext.destination);
-
-        // Set tone properties based on type
-        if(type === 'calm') {
-            toneOscillator.frequency.setValueAtTime(528, audioContext.currentTime); // C note
-            toneGain.gain.setValueAtTime(0.1, audioContext.currentTime);
-        } else if(type === 'nature') {
-            toneOscillator.frequency.setValueAtTime(396, audioContext.currentTime); // G note
-            toneGain.gain.setValueAtTime(0.08, audioContext.currentTime);
-        }
-
-        // Start the tone
-        toneOscillator.start();
-
-        // Update button states
-        document.querySelectorAll('.sound-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-
-        currentSound = { type: 'simple_' + type, audio: null };
-
-    } catch (error) {
-        console.log('Simple tone error:', error);
-        alert('Unable to generate tone. Your browser may not support Web Audio API.');
-    }
-}
-
-function stopSimpleTone() {
-    if(toneOscillator) {
-        try {
-            toneOscillator.stop();
-            toneOscillator = null;
-        } catch (e) {
-            // Oscillator might already be stopped
-        }
-    }
-    if(toneGain) {
-        toneGain = null;
-    }
-}
-
-// Advanced sound generation using Web Audio API
-function playGeneratedSound(type) {
-    stopAllSounds();
-    stopSimpleTone();
-
-    try {
-        // Initialize audio context
-        if(!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-
-        if(audioContext.state === 'suspended') {
-            audioContext.resume();
-        }
-
-        const volume = document.getElementById('volume-slider') ? document.getElementById('volume-slider').value / 100 : 0.5;
-
-        switch(type) {
-            case 'rain':
-                generateRainSound(volume);
-                break;
-            case 'ocean':
-                generateOceanSound(volume);
-                break;
-            case 'forest':
-                generateForestSound(volume);
-                break;
-            case 'meditation':
-                generateMeditationSound(volume);
-                break;
-        }
-
-        // Update button states
-        document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-
-        currentSound = { type: 'generated_' + type, audio: null };
-
-    } catch (error) {
-        console.log('Generated sound error:', error);
-        alert('Unable to generate sound. Your browser may not support Web Audio API.');
-    }
-}
-
-function generateRainSound(volume) {
-    // Create multiple oscillators for rain effect
-    for(let i = 0; i < 5; i++) {
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
-        // Random frequency for rain drops
-        oscillator.frequency.setValueAtTime(800 + Math.random() * 400, audioContext.currentTime);
-
-        // Volume envelope
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(volume * 0.1, audioContext.currentTime + 0.01);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
-
-        oscillator.start(audioContext.currentTime + Math.random() * 2);
-        oscillator.stop(audioContext.currentTime + 0.5 + Math.random() * 2);
-    }
-
-    // Repeat the rain effect
-    setInterval(() => {
-        if(currentSound && currentSound.type === 'generated_rain') {
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            oscillator.frequency.setValueAtTime(800 + Math.random() * 400, audioContext.currentTime);
-            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-            gainNode.gain.linearRampToValueAtTime(volume * 0.1, audioContext.currentTime + 0.01);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.5);
-
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + 0.5);
-        }
-    }, 200);
-}
-
-function generateOceanSound(volume) {
-    // Create wave-like sound using multiple oscillators
-    const oscillators = [];
-    for(let i = 0; i < 3; i++) {
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        const filter = audioContext.createBiquadFilter();
-
-        oscillator.connect(filter);
-        filter.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
-        // Low frequency for ocean waves
-        oscillator.frequency.setValueAtTime(60 + i * 20, audioContext.currentTime);
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(200, audioContext.currentTime);
-
-        gainNode.gain.setValueAtTime(volume * 0.15, audioContext.currentTime);
-
-        oscillator.start();
-        oscillators.push({oscillator, gainNode});
-    }
-
-    // Store for cleanup
-    currentSound.oscillators = oscillators;
-}
-
-function generateForestSound(volume) {
-    // Create bird-like sounds with occasional chirps
-    const createChirp = () => {
-        if(currentSound && currentSound.type === 'generated_forest') {
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            // Bird chirp frequencies
-            const frequencies = [800, 1000, 1200, 900, 1100];
-            const freq = frequencies[Math.floor(Math.random() * frequencies.length)];
-
-            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
-            oscillator.frequency.exponentialRampToValueAtTime(freq * 1.5, audioContext.currentTime + 0.1);
-
-            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-            gainNode.gain.linearRampToValueAtTime(volume * 0.08, audioContext.currentTime + 0.05);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
-
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + 0.2);
-        }
-    };
-
-    // Occasional chirps
-    createChirp();
-    setInterval(createChirp, 3000 + Math.random() * 5000);
-}
-
-function generateMeditationSound(volume) {
-    // Create bell-like meditation sound
-    const createBell = () => {
-        if(currentSound && currentSound.type === 'generated_meditation') {
-            const oscillators = [];
-
-            // Fundamental and harmonics
-            const frequencies = [528, 1056, 1584, 2112]; // C note harmonics
-
-            frequencies.forEach((freq, index) => {
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-
-                oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
-
-                // Longer decay for lower harmonics
-                const decayTime = 3 - index * 0.5;
-                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                gainNode.gain.linearRampToValueAtTime(volume * (0.1 / (index + 1)), audioContext.currentTime + 0.01);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + decayTime);
-
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + decayTime);
-
-                oscillators.push({oscillator, gainNode});
-            });
-
-            currentSound.oscillators = oscillators;
-        }
-    };
-
-    // Play bell every 30 seconds
-    createBell();
-    setInterval(createBell, 30000);
-}
 
 // SETTINGS
 function loadSettings() {

@@ -1,7 +1,7 @@
 // Service Worker for Mendify PWA - Enhanced Offline Caching
 const CACHE_NAME = 'mendify-v1.3';
 const urlsToCache = [
-  './MENDIFY.HTML',
+  './index.html',
   './about.html',
   './gallery.html',
   './mendify.css',
@@ -159,7 +159,7 @@ self.addEventListener('fetch', event => {
           .catch(() => {
             // Return fallback for app shell
             if (event.request.destination === 'document') {
-              return caches.match('./MENDIFY.HTML');
+              return caches.match('./index.html');
             }
             // Return a generic error response for other resources
             return new Response('Resource unavailable offline', {

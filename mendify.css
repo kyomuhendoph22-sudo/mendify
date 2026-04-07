@@ -11,6 +11,31 @@
     --glass: rgba(255, 255, 255, 0.1);
 }
 
+.skip-to-main {
+    position: absolute;
+    left: -999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: 999;
+}
+
+.skip-to-main:focus,
+.skip-to-main:active {
+    left: 20px;
+    top: 20px;
+    width: auto;
+    height: auto;
+    padding: 12px 18px;
+    background: var(--card);
+    color: var(--text);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
 /* Dark Theme Variables */
 [data-theme="dark"] {
     --bg: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
@@ -65,6 +90,163 @@ body::before {
     border: 1px solid var(--border);
     animation: slideIn 0.6s ease-out;
     transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mini-dashboard {
+    display: flex;
+    justify-content: space-between;
+    margin: -30px 0 20px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    backdrop-filter: blur(15px);
+    animation: bounceIn 0.4s ease-in-out;
+}
+
+.mini-metric {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text);
+}
+
+.mini-metric strong {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.daily-challenge {
+    margin: 16px 0 24px;
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    text-align: left;
+    animation: cardPop 0.45s ease-out;
+}
+
+.daily-challenge h4 {
+    margin: 0 0 8px;
+    color: #047857;
+    font-size: 16px;
+}
+
+.daily-challenge p {
+    margin: 0 0 10px;
+    color: var(--text);
+    font-size: 14px;
+}
+
+#challenge-btn {
+    height: auto;
+    font-size: 14px;
+    padding: 10px 14px;
+}
+
+.progress-ring {
+    display: inline-block;
+    position: relative;
+}
+
+.progress-ring circle {
+    fill: transparent;
+    stroke-width: 9;
+    stroke-linecap: round;
+}
+
+.progress-ring circle.bg {
+    stroke: #e5e7eb;
+}
+
+.progress-ring circle.progress {
+    stroke: var(--accent);
+    stroke-dasharray: 0 1000;
+    transition: stroke-dasharray 0.4s ease;
+}
+
+.progress-ring-text {
+    font-size: 16px;
+    text-align: center;
+    color: var(--accent);
+}
+
+@keyframes confetti-fall {
+    0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(130vh) rotate(720deg); opacity: 0; }
+}
+
+.confetti-piece {
+    position: fixed;
+    width: 8px;
+    height: 12px;
+    background-color: #f59e0b;
+    opacity: 0;
+    pointer-events: none;
+    border-radius: 2px;
+    animation: confetti-fall 2.2s ease-out forwards;
+}
+
+.confetti-piece:nth-child(2n) { background-color: #10b981; }
+.confetti-piece:nth-child(3n) { background-color: #3b82f6; }
+.confetti-piece:nth-child(4n) { background-color: #6366f1; }
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border);
+    animation: statPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes statPulse {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+#challenge-btn {
+    height: auto;
+    font-size: 14px;
+    padding: 10px 14px;
+}
+
+.calendar-day {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.calendar-day:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.calendar-day.positive { background-color: #10b981; }
+.calendar-day.neutral { background-color: #fbbf24; }
+.calendar-day.challenging { background-color: #ef4444; }
+.calendar-day.empty { background-color: #e5e7eb; color: #666; }
+
+@keyframes cardPop {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bounceIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideIn {
@@ -139,6 +321,18 @@ body::before {
 .btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn:focus-visible,
+.sound-btn:focus-visible,
+.mood-btn:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+    outline: 3px solid #facc15;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.4);
 }
 
 .btn:active {
@@ -251,6 +445,36 @@ input:focus, textarea:focus {
 @keyframes breathe {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.1); }
+}
+
+#breathing-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.3), rgba(102, 126, 234, 0.1));
+    margin: 20px auto;
+    border: 3px solid var(--accent);
+    transition: transform 2s ease-in-out, opacity 0.5s ease;
+}
+
+#breathing-circle.inhale {
+    animation: inhale 4s ease-in-out;
+}
+
+#breathing-circle.exhale {
+    animation: exhale 4s ease-in-out;
+}
+
+@keyframes inhale {
+    0% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.5); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.7; }
+}
+
+@keyframes exhale {
+    0% { transform: scale(1.5); opacity: 1; }
+    50% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.5); opacity: 1; }
 }
 
 .mood-tracker {
